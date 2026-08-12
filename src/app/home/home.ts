@@ -1,18 +1,52 @@
 import { Component } from '@angular/core';
 import {TuiTiles, TuiFluidTypography} from '@taiga-ui/kit';
-	import { TuiIcon, TuiInputDirective, TuiTextfield } from '@taiga-ui/core';
+import { TuiIcon, TuiInputDirective, TuiTextfield } from '@taiga-ui/core';
+import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-home',
-  imports: [TuiTiles, TuiIcon, TuiInputDirective, TuiTextfield, TuiFluidTypography],
+  standalone: true,
+  imports: [TuiTiles, TuiIcon, TuiInputDirective, TuiTextfield, TuiFluidTypography, FormsModule, CommonModule],
   templateUrl: './home.html',
-  styleUrl: './home.less',
+  styleUrls: ['./home.less'],
 })
 export class Home {protected items = [
-        {content: 'Pep'},
-        {content: 'Pui'},
-        {content: 'Javi'},
+        {owner: 'Pep', product: null, image: null},
+        {owner: 'Pui', product: null, image: null},
+        {owner: 'Javi', product: null, image: null},
     ];
  
     protected order = new Map();
+
+    // Escucha el evento 'paste' en la ventana del navegador
+  onPaste(event: ClipboardEvent, currentItemIndex: number): void {
+    const items = event.clipboardData?.items;
+
+    if (!items) return;
+
+    // Busca si hay alguna imagen en los elementos del portapapeles
+    for (let i = 0; i < items.length; i++) {
+      if (items[i].type.indexOf('image') !== -1) {
+        // Convierte el elemento en un archivo (File blob)
+        const file = items[i].getAsFile();
+        
+        if (file) {
+          this.convertToBase64(file, currentItemIndex);
+        }
+        break; // Detiene el bucle tras encontrar la primera imagen
+      }
+    }
+  }
+
+  // Convierte el archivo binario en una cadena Base64 legible por la etiqueta <img>
+  private convertToBase64(file: File, currentItemIndex: number): void {
+    const reader = new FileReader();
+    
+    reader.onload = (e: any) => {
+      this.items[currentItemIndex].image = e.target.result;
+    };
+
+    reader.readAsDataURL(file);
+  }
 }
