@@ -1,0 +1,36 @@
+<tui-tiles
+    class="tiles"
+    [debounce]="500"
+    [(order)]="order"
+>
+    @for (item of items; track item) {
+        <tui-tile
+            class="tile"
+            [style.order]="order.get($index)"
+        >
+            <div
+                class="content"
+            >
+                    <h2 class="title">{{ item.content }}</h2>
+                    <tui-textfield>
+    <input
+        placeholder="Producto"
+        [tuiFluidTypography]="[0.5,2.5]"
+        tuiInput
+    />
+</tui-textfield>
+
+                <tui-icon
+                    icon="@tui.grip-vertical"
+                    tuiTileHandle
+                    class="handle"
+                />
+                <tui-icon
+                    icon="@tui.grip-vertical"
+                    tuiTileHandle
+                    class="handle"
+                />
+            </div>
+        </tui-tile>
+    }
+</tui-tiles>
