@@ -82,7 +82,7 @@
         "deploy": {
           "builder": "angular-cli-ghpages:deploy",
           "options": {
-            "baseHref": "/telocompro/"
+            "baseHref": "/chiclana-telocompro/"
           }
         }
       }
