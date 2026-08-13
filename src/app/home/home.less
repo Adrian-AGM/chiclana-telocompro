@@ -1,5 +1,15 @@
 @import '@taiga-ui/styles/utils.less';
 
+.main-container {
+    padding: 2rem;
+
+}
+
+:host ::ng-deep [tuiAvatar][data-size]._initials:before {
+    font-weight: 800;
+    font-size: 20px;
+}
+
 .tiles {
     padding: 1rem;
     gap: 1rem;
@@ -53,4 +63,51 @@
     tui-tile._dragged & {
         opacity: 0.7;
     }
+}
+
+input.price {
+    text-align: end;
+    font-weight: 700;
+    font-size: 36px;
+}
+
+tui-stepper {
+    justify-content: space-between !important;
+
+    button {
+        div:before {
+            font-weight: 700 !important;
+        }
+    }
+}
+
+.horizontal-connected-stepper {
+    display: flex;
+    align-items: center;
+    position: relative;
+    gap: 1.5rem;
+    /* spacing between steps, adjust as needed */
+}
+
+.horizontal-connected-stepper button[tuiStep] {
+    position: relative;
+    z-index: 1;
+}
+
+/* Draw the horizontal connection lines */
+.horizontal-connected-stepper button[tuiStep]:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    /* vertically center the line relative to button */
+    left: 100%;
+    /* start from right edge of button */
+    width: calc((100vw - 515px) / 2);
+    /* length of connection line */
+    height: 2px;
+    /* thickness of the line */
+    background-color: var(--tui-background-neutral-1);
+    /* or your theme's connector color */
+    transform: translateY(-50%);
+    z-index: 0;
 }
