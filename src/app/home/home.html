@@ -1,50 +1,47 @@
-<tui-tiles
-    class="tiles"
-    [debounce]="500"
-    [(order)]="order"
->
-    @for (item of items; track item) {
-        <tui-tile
-            class="tile"
-            [style.order]="order.get($index)"
-        >
-            <div
-                class="content"
-            >
+<div class="main-container">
+    <tui-stepper orientation="horizontal" [activeItemIndex]="0" class="horizontal-connected-stepper">
+        <button icon="@tui.presentation" stepState="pass" tuiStep>
+            Presentación
+        </button>
+        <button tuiStep icon="@tui.notebook-pen">Calificación</button>
+        <button disabled icon="@tui.chart-column" tuiStep>
+            Resultados
+        </button>
+    </tui-stepper>
+    <tui-tiles class="tiles" [debounce]="500" [(order)]="order">
+        @for (item of items; track item) {
+        <tui-tile class="tile" [style.order]="order.get($index)">
+            <div class="content">
+                <!-- OWNER -->
                 <h2 class="title">{{ item.owner }}</h2>
+                <!-- PRODUCT -->
                 <tui-textfield>
-                    <input
-                        placeholder="Producto"
-                        [tuiFluidTypography]="[0.5,2.5]"
-                        [(ngModel)]="item.product"
-                        tuiInput
-                    />
+                    <input placeholder="Producto" [tuiFluidTypography]="[0.5,2.5]" [(ngModel)]="item.product"
+                        tuiInput />
                 </tui-textfield>
-                <div 
-                    class="paste-container" 
-                    (paste)="onPaste($event, $index)">
-                    
+                <!-- IMAGE -->
+                <div class="paste-container" (paste)="onPaste($event, $index)">
+
                     <p *ngIf="!item.image">
                         Haz clic aquí dentro y presiona <strong>Ctrl + V</strong> (o Cmd + V) para pegar una imagen.
                     </p>
                     @if (item.image) {
-                        <div class="preview-container">
-                            <img [src]="item.image" style="max-width: 100%; height: 300px;" alt="Vista previa de la imagen pegada" />
-                        </div>
+                    <div class="preview-container">
+                        <img [src]="item.image" style="max-width: 100%; height: 300px;"
+                            alt="Vista previa de la imagen pegada" />
+                    </div>
                     }
                 </div>
+                <!-- PRICE -->
+                <tui-textfield>
+                    <input class="price" [(ngModel)]="item.price" placeholder="Precio" tuiInputNumber
+                        [tuiNumberFormat]="numberFormat" [postfix]="'EUR' | tuiCurrency" />
+                </tui-textfield>
 
-                <tui-icon
-                    icon="@tui.grip-vertical"
-                    tuiTileHandle
-                    class="handle"
-                />
-                <tui-icon
-                    icon="@tui.grip-vertical"
-                    tuiTileHandle
-                    class="handle"
-                />
+                <tui-icon icon="@tui.grip-vertical" tuiTileHandle class="handle" />
+                <tui-icon icon="@tui.grip-vertical" tuiTileHandle class="handle" />
             </div>
         </tui-tile>
-    }
-</tui-tiles>
+        }
+    </tui-tiles>
+</div>
