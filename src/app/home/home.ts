@@ -1,10 +1,11 @@
-import { Component } from '@angular/core';
-import { TuiTiles, TuiFluidTypography, TuiStepper, TuiConnected } from '@taiga-ui/kit';
-import { TuiIcon, TuiInputDirective, TuiTextfield, TuiNumberFormat, TuiNumberFormatSettings } from '@taiga-ui/core';
+import { Component, signal } from '@angular/core';
+import { TuiTiles, TuiFluidTypography, TuiStepper } from '@taiga-ui/kit';
+import { TuiIcon, TuiInputDirective, TuiTextfield, TuiNumberFormat, TuiNumberFormatSettings, tuiTextfieldOptionsProvider } from '@taiga-ui/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { TuiCurrencyPipe } from '@taiga-ui/addon-commerce';
 import { TuiInputNumber } from '@taiga-ui/kit';
+import { TuiSurface } from '@taiga-ui/layout';
 
 @Component({
   selector: 'app-home',
@@ -12,9 +13,14 @@ import { TuiInputNumber } from '@taiga-ui/kit';
   imports: [
     TuiTiles,
     TuiIcon,
-    TuiInputDirective, TuiStepper, TuiConnected, TuiNumberFormat, TuiTextfield, TuiFluidTypography, FormsModule, CommonModule, TuiCurrencyPipe, TuiInputNumber],
+    TuiInputDirective, TuiStepper, TuiSurface, TuiNumberFormat, TuiTextfield, TuiFluidTypography, FormsModule, CommonModule, TuiCurrencyPipe, TuiInputNumber],
   templateUrl: './home.html',
   styleUrls: ['./home.less'],
+  providers: [
+    tuiTextfieldOptionsProvider({
+      cleaner: signal(false), // Oculta el botón de borrar
+    }),
+  ],
 })
 
 

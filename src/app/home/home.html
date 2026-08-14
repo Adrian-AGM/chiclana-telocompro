@@ -15,7 +15,7 @@
                 <!-- OWNER -->
                 <h2 class="title">{{ item.owner }}</h2>
                 <!-- PRODUCT -->
-                <tui-textfield>
+                <tui-textfield [ngClass]="{plain: !!item.product}">
                     <input placeholder="Producto" [tuiFluidTypography]="[0.5,2.5]" [(ngModel)]="item.product"
                         tuiInput />
                 </tui-textfield>
