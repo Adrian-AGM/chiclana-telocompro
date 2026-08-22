@@ -23,15 +23,18 @@
                         tuiInput />
                 </tui-textfield>
                 <!-- IMAGE -->
-                <div class="paste-container" (paste)="onPaste($event, $index)">
+                <div class="paste-container" (tuiActiveZoneChange)="onParentActiveZone($event, $index)"
+                    (paste)="onPaste($event, $index)" tabindex="0">
                     @if (!item.loadingImage && !item.image) {
-                    Haz clic aquí y pega una imagen desde el portapapeles
+                    <div class="paste-message" [class.active]="item.copiadoActivo">
+                        Haz clic aquí y pega una dirección de imagen desde el portapapeles
+                    </div>
                     }
                     @if (item.loadingImage) {
                     <tui-loader></tui-loader>
                     }
                     <img [src]="item.image" alt="Vista previa de la imagen pegada" (load)="onImagenCargada($index)"
-                        [ngClass]="{'ocultar': !item.image}" />
+                        [ngClass]="{'ocultar': !item.image}" [class.active]="item.copiadoActivo" />
                 </div>
                 <!-- PRICE -->
                 <tui-textfield>

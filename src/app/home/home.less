@@ -15,12 +15,31 @@
     justify-content: center;
     margin: 10px 0;
 
+    .paste-message {
+        display: flex;
+        align-items: center;
+        text-align: center;
+        justify-content: center;
+        width: calc(100% - 10px);
+        height: calc(100% - 10px);
+        border: 5px solid var(--tui-border-normal);
+        border-radius: var(--tui-radius-l);
+
+        &.active {
+            border: 5px solid var(--tui-background-accent-1);
+        }
+    }
+
     img {
         max-height: calc(100% - 10px);
         max-width: calc(100% - 10px);
         justify-content: center;
         border: 5px solid var(--tui-border-normal);
         border-radius: var(--tui-radius-l);
+
+        &.active {
+            border: 5px solid var(--tui-background-accent-1);
+        }
     }
 }
 
