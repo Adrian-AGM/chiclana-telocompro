@@ -3,11 +3,12 @@
         <button icon="@tui.presentation" stepState="pass" tuiStep>
             Presentación
         </button>
-        <button tuiStep icon="@tui.notebook-pen">Calificación</button>
+        <button disabled tuiStep icon="@tui.notebook-pen">Calificación</button>
         <button disabled icon="@tui.chart-column" tuiStep>
             Resultados
         </button>
     </tui-stepper>
+    @if (items) {
     <tui-tiles class="tiles" [debounce]="100" [(order)]="order">
         @for (item of items; track item) {
         <tui-tile class="tile" [style.order]="order.get($index)" [style.background]="item.baseColor + '59'"
@@ -33,8 +34,11 @@
                     @if (item.loadingImage) {
                     <tui-loader></tui-loader>
                     }
+                    @if (item.image) {
                     <img [src]="item.image" alt="Vista previa de la imagen pegada" (load)="onImagenCargada($index)"
-                        [ngClass]="{'ocultar': !item.image}" [class.active]="item.copiadoActivo" />
+                        (error)="onErrorImagen($index)" [ngClass]="{'ocultar': !item.image}"
+                        [class.active]="item.copiadoActivo" />
+                    }
                 </div>
                 <!-- PRICE -->
                 <tui-textfield>
@@ -48,4 +52,5 @@
         </tui-tile>
         }
     </tui-tiles>
+    }
 </div>
