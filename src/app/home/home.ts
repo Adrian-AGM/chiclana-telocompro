@@ -1,11 +1,13 @@
-import { Component, signal } from '@angular/core';
-import { TuiTiles, TuiFluidTypography, TuiStepper } from '@taiga-ui/kit';
-import { TuiIcon, TuiInputDirective, TuiTextfield, TuiNumberFormat, TuiNumberFormatSettings, tuiTextfieldOptionsProvider } from '@taiga-ui/core';
-import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { Component, inject, OnInit, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { TuiCurrencyPipe } from '@taiga-ui/addon-commerce';
-import { TuiInputNumber } from '@taiga-ui/kit';
-import { TuiSurface } from '@taiga-ui/layout';
+import { TuiActiveZone } from '@taiga-ui/cdk/directives/active-zone';
+import { TuiIcon, TuiInputDirective, TuiLoader, tuiLoaderOptionsProvider, TuiNumberFormat, TuiNumberFormatSettings, TuiTextfield, tuiTextfieldOptionsProvider } from '@taiga-ui/core';
+import { TuiFluidTypography, TuiInputNumber, TuiStepper, TuiTiles, TuiToastService } from '@taiga-ui/kit';
+import { StorageMap } from '@ngx-pwa/local-storage';
+import { Producto } from '../models/programas.model';
+import { ProgramasService } from '../services/programas.service';
 
 @Component({
   selector: 'app-home',
@@ -13,58 +15,94 @@ import { TuiSurface } from '@taiga-ui/layout';
   imports: [
     TuiTiles,
     TuiIcon,
-    TuiInputDirective, TuiStepper, TuiSurface, TuiNumberFormat, TuiTextfield, TuiFluidTypography, FormsModule, CommonModule, TuiCurrencyPipe, TuiInputNumber],
+    TuiInputDirective,
+    TuiActiveZone,
+    TuiLoader, TuiStepper, TuiNumberFormat, TuiTextfield, TuiFluidTypography, FormsModule, CommonModule, TuiCurrencyPipe, TuiInputNumber],
   templateUrl: './home.html',
   styleUrls: ['./home.less'],
   providers: [
     tuiTextfieldOptionsProvider({
       cleaner: signal(false), // Oculta el botón de borrar
     }),
+    tuiLoaderOptionsProvider({ size: 'xl' })
   ],
 })
 
-
-export class Home {
+export class Home implements OnInit {
+  private readonly programas = inject(ProgramasService);
+  private readonly toast = inject(TuiToastService);
   protected numberFormat: Partial<TuiNumberFormatSettings> = {
     decimalSeparator: ',',
     thousandSeparator: '.',
   };
-  protected items = [
-    { owner: 'Pep', product: null, image: null, price: null },
-    { owner: 'Pui', product: null, image: null, price: null },
-    { owner: 'Javi', product: null, image: null, price: null },
-  ];
+  protected items: Producto[] | null = null;
 
   protected order = new Map();
 
+  ngOnInit(): void {
+    this.programas.obtenerTodos().subscribe((programas) => {
+      if (programas.length > 0) {
+        const primerPrograma = programas[programas.length - 1];
+        this.items = primerPrograma.productos;
+        this.order = primerPrograma.order;
+      }
+    });
+  }
+
   // Escucha el evento 'paste' en la ventana del navegador
   onPaste(event: ClipboardEvent, currentItemIndex: number): void {
-    const items = event.clipboardData?.items;
+    if (this.items) {
+      this.items[currentItemIndex].loadingImage = true;
+      const clipboardData = event.clipboardData;
+      if (!clipboardData) {
+        this.items[currentItemIndex].loadingImage = false;
+        this.mostrarToastImagenInvalida();
+        return;
+      }
 
-    if (!items) return;
-
-    // Busca si hay alguna imagen en los elementos del portapapeles
-    for (let i = 0; i < items.length; i++) {
-      if (items[i].type.indexOf('image') !== -1) {
-        // Convierte el elemento en un archivo (File blob)
-        const file = items[i].getAsFile();
-
-        if (file) {
-          this.convertToBase64(file, currentItemIndex);
-        }
-        break; // Detiene el bucle tras encontrar la primera imagen
+      // 1. Intentar leer si lo que se pegó es un texto/URL
+      const pastedText = clipboardData.getData('text');
+      if (pastedText && this.items[currentItemIndex].image !== pastedText && this.esUrlValida(pastedText)) {
+        this.items[currentItemIndex].image = pastedText;
+        return;
+      } else {
+        this.mostrarToastImagenInvalida();
+        this.items[currentItemIndex].loadingImage = false;
       }
     }
   }
 
-  // Convierte el archivo binario en una cadena Base64 legible por la etiqueta <img>
-  private convertToBase64(file: File, currentItemIndex: number): void {
-    const reader = new FileReader();
+  mostrarToastImagenInvalida() {
+    this.toast
+      .open('Imagen inválida', {
+        autoClose: 5000,
+        data: '@tui.image-off',
+      })
+      .subscribe();
+  }
 
-    reader.onload = (e: any) => {
-      this.items[currentItemIndex].image = e.target.result;
-    };
+  // Validación básica para comprobar si el texto tiene formato de URL
+  private esUrlValida(texto: string): boolean {
+    return texto.startsWith('http://') || texto.startsWith('https://');
+  }
 
-    reader.readAsDataURL(file);
+  onImagenCargada(currentItemIndex: number) {
+    if (this.items) {
+      this.items[currentItemIndex].loadingImage = false;
+    }
+  }
+
+  onErrorImagen(currentItemIndex: number) {
+    if (this.items) {
+      this.items[currentItemIndex].loadingImage = false;
+      this.items[currentItemIndex].image = null;
+    }
+    this.mostrarToastImagenInvalida();
+  }
+
+  protected onParentActiveZone(active: boolean, currentItemIndex: number): void {
+    if (this.items) {
+      this.items[currentItemIndex].copiadoActivo = active;
+    }
   }
 }
