@@ -41,6 +41,7 @@ export class Home implements OnInit {
 
   ngOnInit(): void {
     this.programas.obtenerTodos().subscribe((programas) => {
+      console.log('Programas obtenidos:', programas);
       if (programas.length > 0) {
         const primerPrograma = programas[programas.length - 1];
         this.items = primerPrograma.productos;
