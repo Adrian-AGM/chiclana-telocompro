@@ -22,7 +22,9 @@ export class ProgramasService<T> {
                 if (datosAlmacenados) {
                     return of(datosAlmacenados);
                 } else {
-                    return of([programaDemo]);
+                    const programasDemo: Programa[] = [programaDemo];
+                    this.storage.set('programas', programasDemo).subscribe();
+                    return of(programasDemo);
                 }
             })
         );
